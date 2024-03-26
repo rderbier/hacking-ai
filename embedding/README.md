@@ -114,14 +114,18 @@ _Note_: In current form, after deployment, your API is protected by an API key.
 ### Invocation
 ```
 curl --request POST \
-
 --url https://<>.execute-api.us-east-1.amazonaws.com/dev/embedding \
 --header 'Content-Type: application/json' --header 'x-api-key: <apikey>' \
 --data '{"id":"some sample text"}'
 ```
 
+The first time after deployment you may experience a timeout error.
+```
+{"message": "Endpoint request timed out"}%   
+```
+The AWS Lambda takes time to instanciate. The serverless file is configured to add a call every 5 minutes to keep it 'warm'. 
 
-### Local development
+
 
 
 
