@@ -87,21 +87,22 @@ docker tag ${MODEL_NAME}-arm64 $aws_account_id.dkr.ecr.us-east-1.amazonaws.com/e
 
 ### push the image to ECR
 ```
-aws ecr get-login-password --region $aws_region --profile sandbox \
+aws ecr get-login-password --region $aws_region  \
 | docker login \
     --username AWS \
-    --password-stdin $aws_account_id.dkr.ecr.us-east-1.amazonaws.com/embedding-all-${MODEL_NAME}
+    --password-stdin $aws_account_id.dkr.ecr.us-east-1.amazonaws.com/embedding-${MODEL_NAME}
 Login Succeeded
 
 docker push $aws_account_id.dkr.ecr.us-east-1.amazonaws.com/embedding-${MODEL_NAME}
 ```
 
 ### deploy the serverless function
-set the image reference in serverless.yml config.
+Use serverless framework 3 with serverless-plugin-log-retention.
+
 
 Deploy to AWS
 ```
-$ serverless deploy --aws-profile sandbox
+$ serverless deploy 
 ```
 
 
