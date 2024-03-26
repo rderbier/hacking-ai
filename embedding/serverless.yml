@@ -1,12 +1,10 @@
-service: all-minilm-l6-v2
-	
+service: ${env:MODEL_NAME}
+
 plugins:
   - serverless-plugin-log-retention
-  - serverless-add-api-key
 custom:
-  apiKeys:
-    - name: all-minilm-l6-v2-apikey
-      value: 1JnRhj1sn4aT9oANQV6wd6mSR7p8CvOZ8BqOjuGr
+  model_name: ${env:MODEL_NAME}
+  ecr_image: ${env:aws_account_id}.dkr.ecr.${self:provider.region}.amazonaws.com/embedding-${self:custom.model_name}:latest
 provider:
   name: aws # provider
   region: us-east-1 # aws region
@@ -16,13 +14,14 @@ provider:
   stage: ${opt:stage, 'dev'}
   environment:
     TRANSFORMERS_CACHE: /var/task
+  apiGateway:
+    apiKeys:
+      - ${self:custom.model_name}-apikey
 
-  apiKeys:
-      - all-minilm-l6-v2-apikey
 
 functions:
   sentence-encoding:
-    image: 436061841671.dkr.ecr.us-east-1.amazonaws.com/embedding-all-minilm-l6-v2:latest
+    image: ${self:custom.ecr_image}
     logRetentionInDays: 1
    
     events:
@@ -31,5 +30,5 @@ functions:
           method: post # http method
           private: true
       - schedule:
-          name: all-minilm-l6-v2-warm
+          name: ${self:custom.model_name}-warm
           rate: rate(5 minutes)
