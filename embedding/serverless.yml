@@ -1,0 +1,35 @@
+service: all-minilm-l6-v2
+	
+plugins:
+  - serverless-plugin-log-retention
+  - serverless-add-api-key
+custom:
+  apiKeys:
+    - name: all-minilm-l6-v2-apikey
+      value: 1JnRhj1sn4aT9oANQV6wd6mSR7p8CvOZ8BqOjuGr
+provider:
+  name: aws # provider
+  region: us-east-1 # aws region
+  memorySize: 3008 # optional, in MB, default is 1024
+  timeout: 30 # optional, in seconds, default is 6
+  architecture: arm64
+  stage: ${opt:stage, 'dev'}
+  environment:
+    TRANSFORMERS_CACHE: /var/task
+
+  apiKeys:
+      - all-minilm-l6-v2-apikey
+
+functions:
+  sentence-encoding:
+    image: 436061841671.dkr.ecr.us-east-1.amazonaws.com/embedding-all-minilm-l6-v2:latest
+    logRetentionInDays: 1
+   
+    events:
+      - http:
+          path: embedding # http path
+          method: post # http method
+          private: true
+      - schedule:
+          name: all-minilm-l6-v2-warm
+          rate: rate(5 minutes)
