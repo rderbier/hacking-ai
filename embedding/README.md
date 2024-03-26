@@ -54,23 +54,29 @@ pytorch==1.13
 run the script ./scripts/getmodels.py
 
 
-Verify that the models are created in model folder and are in the format of pytorch_model.bin
+Verify that the model artefacts are created in model folder and are in the format of pytorch_model.bin
 
 torch 2 is producing a different model format, make sure you are using the right version.
 
 
 ### Set your AWS CLI 
 Have AWS cli installed.
-Use secrets from AWS.
+Get your credentials from your AWS account.
+```
+export AWS_ACCESS_KEY_ID="ASIA..."
+export AWS_SECRET_ACCESS_KEY="..."
+export AWS_SESSION_TOKEN="..."
+```
+or use an aws profile.
 
 ### Create ECR repository
 ```
 export aws_region=us-east-1
-export aws_account_id=<account_id>
+export aws_account_id=`aws sts get-caller-identity --query Account --output text`
 
 export MODEL_NAME="all-minilm-l6-v2"
 
-aws ecr create-repository --repository-name embedding-${MODEL_NAME} --region $aws_region --profile sandbox
+aws ecr create-repository --repository-name embedding-${MODEL_NAME} --region $aws_region 
 ```
 ### build and tag the docker image
 ```
